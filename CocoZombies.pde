@@ -1,10 +1,16 @@
 // Zombie Infection Simulation
 // Kevan Davis, 16/8/03
 // Modified by John Gilbertson 25/09/03
+// Modified by Coconutsales January 2025
 // just making zombies more dangerous, edited level creation code, increased max zombies, made zombies less likely to group etc...
 
 int freeze; // Used for ???
-int num=4000; // Starting population
+// int num=4000; // Starting population
+int popMax=20000; // Maximum Population
+int popMin=1000; // Minimum Population
+int popCount=1000*ceil(((popMax-popMin)/2)/1000); // Currently set population to simulate between popMax and popMin. Rounds up to nearest 1000 to prevent odd population counts
+//int popCount=((popMax-popMin)/2); // OLD population calculation, had issues ending up higher than max or lower than min
+int popZomb=5; // Starting number of zombies to spawn
 int speed=1; // Speed of humans / zombies
 int panic=5; // Speed of panichuman
 int human; // Main NPC
@@ -19,7 +25,7 @@ int ishuman=2; // Definition for counting if being is a human
 int ispanichuman=4; // Definition for counting if being is panicking
 int iszombie=1; // Definition for counting if being is a zombie
 int isdead=5; // Definition for counting if being is dead
-boolean enableDecay=false;
+boolean enableDecay=false; // Can zombies die of old age (decay)?
 
 Being[] beings;
 
@@ -76,16 +82,16 @@ void setup()
   fill(empty);
   stroke(wall);
   rect(0,height-30,width-2,height-2);
-  beings = new Being[20000];        
-  for(int i=0; i<num; i++)
+  beings = new Being[popCount];        
+  for(int i=0; i<popCount; i++) // For each expected population count, create another array entry
   { beings[i] = new Being(); beings[i].position(); }
 
-  // Spawns 4 zombies to start by setting beings 0, 1, 2, and 3 as infected, infect method defined below around ln236
-  beings[0].infect();
-  beings[1].infect();
-  beings[2].infect();
-  beings[3].infect();
+  // Spawns 'i' zombies to start by setting beings 0, 1, 2, 3, etc... as infected. Infect method defined below around ln236
+  for(int i=0; i<popZomb; i++) 
+  {
+  beings[i].infect();
   freeze=0;
+  }
 } 
  
 
@@ -101,7 +107,7 @@ void draw()
     stroke(wall);
     rect(0,height-30,width-2,height-2);  
     
-    for(int i=0; i<num; i++) 
+    for(int i=0; i<popCount; i++) // Move each being in the array in iterative sequence
     { 
       beings[i].move(); 
     } 
@@ -112,13 +118,13 @@ void draw()
     int numZombies=0;
     int numDead=0;
         
-    for(int j=0;j<num;j++)
+    for(int j=0;j<popCount;j++)
     {
-      if(beings[j].type==iszombie)
+      if(beings[j].type==iszombie) // If being is made a zombie, increase zombie counter ???
       {
         numZombies++;
       }
-      if(beings[j].type==isdead)
+      if(beings[j].type==isdead) // If being is made dead, increase dead counter ???
       {
         numDead++;
       }
@@ -126,7 +132,7 @@ void draw()
 // POPULATION STATUS TEXT UI
     fill(human);
     noStroke();
-    String s="Humans:" + (num-(numDead+numZombies));
+    String s="Humans:" + (popCount-(numDead+numZombies));
     text(s,width/10,height-10); // Places text to the left
     
     fill(dead);
@@ -150,7 +156,7 @@ void mousePressed()
   fill(empty); // Fills the area with 'empty' space
   stroke(hit); // Sets the fill color of above 'empty' space (it's olive)
   ellipse(mx,my,radius*2,radius*2); // Mouse X coord minus the random radius for drawing origin X, Mouse Y coord minus random radius for drawing origin Y, radius times 2 for width and height
-  for(int i=0;i<num;i++)
+  for(int i=0;i<popCount;i++) // If being is within radius of the mouse cursor, kill them
   {
     int dx=beings[i].xpos-mx;
     int dy=beings[i].ypos-my;
@@ -187,17 +193,48 @@ int look(int x, int y,int d,int dist)
   return 0;
 }
 
+
+// HOTKEYS
 void keyPressed() 
 { 
-  if(key == ' ')
+  if(key == ' ') // If last pressed key is blank. . .
   {
-    key='z';
+    key='r'; // set last pressed key to R
   } 
-  if(key == '+' && num < 20000) { num += 1000; key='z'; }
-  if(key == '-' && num > 4000) { num -= 1000; key='z'; }
-  if(key == 'z' || key == 'Z') // If pressing uppercase or lowercase Z,
+
+  if(key == '+' && popCount < popMax)  // If key is +, increase pop up to population MAX
+  { 
+    popCount += 1000; key='r'; // increase pop then sets "last pressed" key to the [r]eset key, which restarts sim
+  }
+
+  if(key == '-' && popCount > popMin) // If key is -, decrease pop down to population MIN
+  { 
+    popCount -= 1000; key='r'; // decrease pop then sets "last pressed" key to the [r]eset key, which restarts sim
+  }
+
+  if(key == '[' && (popZomb > 1) ) // If key is [ and starting zombie pop is greater than 1
+  { 
+    popZomb -= 1; key='r'; // decrease starting zombie pop by 1 then sets "last pressed" key to the reset key, which [r]estarts sim
+  }
+
+  if(key == ']' && (popZomb < popCount) ) // If key is ] and starting zombie pop is less than popCount (current spawn population)
+  { 
+    popZomb += 1; key='r'; // increase starting zombie pop by 1 then sets "last pressed" key to the reset key, which [r]estarts sim
+  }
+
+  if(key == 'd' && enableDecay==false) 
+  { 
+    enableDecay=true; 
+  } 
+    else 
+    {
+      enableDecay=false;
+    }
+  
+
+  if(key == 'r' || key == 'R') // If pressing uppercase or lowercase R,
   {
-    freeze=1; // Pause the simulation and restart?
+    freeze=1; // Pause the simulation and restart
     setup(); 
   }
 }
@@ -221,8 +258,8 @@ class Being
     rest=40;
   }
 
-  void die()
-  {
+  void die() 
+  { // Kills the Being by assigning them type 5 (dead) which is clarified below
     type=5;
   }
 
@@ -257,7 +294,7 @@ class Being
 
   void move()
   {
-    if(type==5)
+    if(type==5) // sets the pixel the being inhabits to a dead pixel if they are assigned type 5 (dead)
     {
       set(xpos,ypos,dead);
     }
@@ -353,15 +390,16 @@ class Being
           if (dir==2) { ix++; }
           if (dir==3) { iy++; }
           if (dir==4) { ix--; }
-          for(int i=0; i<num; i++)
+          for(int i=0; i<popCount; i++)
           { 
             beings[i].infect(ix,iy); 
           }
         }  
-        if((enableDecay=true)&&(zombielife<=0)) // KILLS THE ZOMBIE if zombielife reaches 0 granted Decay is on
+        if((enableDecay==true) && (zombielife<=0)) // KILLS THE ZOMBIE if zombielife reaches 0 granted Decay is on
         {
           die(); // calls the die method that sets 
         }
+
       }
       else if (type==2)
       {
