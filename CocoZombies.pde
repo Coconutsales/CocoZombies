@@ -156,7 +156,7 @@ void mousePressed()
   fill(empty); // Fills the area with 'empty' space
   stroke(hit); // Sets the fill color of above 'empty' space (it's olive)
   ellipse(mx,my,radius*2,radius*2); // Mouse X coord minus the random radius for drawing origin X, Mouse Y coord minus random radius for drawing origin Y, radius times 2 for width and height
-  for(int i=0;i<popCount;i++) // If being is within radius of the mouse cursor, kill them
+  for(int i=0;i<popCount;i++) // If being is within radius of the mouse cursor, kill them - checking for each being in the array
   {
     int dx=beings[i].xpos-mx;
     int dy=beings[i].ypos-my;
@@ -168,6 +168,7 @@ void mousePressed()
   }
 }
 
+// Integer for TYPE of target, used in target interactions - ie zombies eating walls, zombies infecting humans, or humans panicking
 int look(int x, int y,int d,int dist)
 {
   for(int i=0; i<dist; i++)
@@ -338,20 +339,20 @@ class Being
         if (active>0) {active--;}
       }
 
-      int target = look(xpos,ypos,dir,10);
+      int target = look(xpos,ypos,dir,10); // Sets target to facing pixel
 
-      if (type==1)
+      if (type==1)  // IF a ZOMBIE (type 1)
       {
-        zombielife--;
-        if (target==2 || target==4) { active = 10;}
+        zombielife--; // Decreases zombielife by 1
+        if (target==2 || target==4) { active = 10;} // if facing a 
         else if (target==3)
         {
           if((int)random(8)==1)
           {
-            if (dir==1) { set(xpos,ypos-1,empty); }
-            else if (dir==2) { set(xpos+1,ypos,empty); }
-            else if (dir==3) { set(xpos,ypos+1,empty); }
-            else if (dir==4) { set(xpos-1,ypos,empty); }
+            if (dir==1) { set(xpos,ypos-1,empty); } // If facing down, place empty below
+            else if (dir==2) { set(xpos+1,ypos,empty); } // If facing right, place empty right
+            else if (dir==3) { set(xpos,ypos+1,empty); } // If facing up, place empty above
+            else if (dir==4) { set(xpos-1,ypos,empty); } // If facing left, place empty left
 
           }
           if(look(xpos,ypos,dir,2)==iszombie)
