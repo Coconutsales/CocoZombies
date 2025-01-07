@@ -223,7 +223,7 @@ void keyPressed()
     popZomb += 1; key='r'; // increase starting zombie pop by 1 then sets "last pressed" key to the reset key, which [r]estarts sim
   }
 
-  if(key == 'd' && enableDecay==false) 
+  if((key == 'd' || key =='D') && enableDecay==false) 
   { 
     enableDecay=true; 
   } 
