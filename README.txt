@@ -11,6 +11,8 @@
 # Zombie Infection Simulation
 # ORIGINAL CODE by Kevan Davis; August 16th, 2003
 # Modified by John "Hardcorepawn" Gilbertson; September 25th, 2003
+# Find Windows 10 compatible, stand-alone versions (with source code) of these two original versions plus 3 others in my Zombie Infection Simulator archives!
+# >> https://www.dropbox.com/scl/fo/f2696us37wqecn2bvk7tk/AFcFPbmSHfUQJfjI6-HBBrY?rlkey=sdk12g2ezuvh9r831rbhgeira << - Coconutsales
 # 
 # Cocozombies edit, based off Hardcorepawn's changes, January 2025
 # By Coconutsales
