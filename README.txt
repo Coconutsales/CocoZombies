@@ -6,7 +6,7 @@
 # \____/\___/ \___\___/ \_____/\___/\_|  |_/\____/ \___/\____/\____/ 
 #                           ASCII by https://patorjk.com/software/taag/
 #                                   
-#                       CocoZOMBIES V1.3
+#                       CocoZOMBIES V1.4
 #                                   
 # Zombie Infection Simulation
 # ORIGINAL CODE by Kevan Davis; August 16th, 2003
@@ -24,18 +24,32 @@
 # Spacebar = Pause
 # - and + = Decrease and Increase total population (Arbitrarily set to a max of 20,000 and min of 1,000)
 # [ and ] = Decrease and Increase ZOMBIE population (Cannot be lower than 1, or higher than total population)
-# d = Zombie [D]ecay toggle on / off (Default: ON. Note selection indicator bottom left) At default speed, alive zombies die in 28sec 
+# d = Zombie [D]ecay toggle on / off (Default: ON. Note selection indicator bottom left) At default speed, alive zombies die in 28sec
 # r = [r]esets the simulation at currently set values
 # R = Fully [R]esets the simulation at default values (Starting Zombie count, Population, Simulation Speed, Decay)
+# ESCAPE - View the Controls Menu
 # 
 # ==============================================================================
 # ================================== CHANGES: ==================================
 # 
+# CocoZombies V1.4 1/11/2025
+# New SPLASH SCREEN when you open the game, before you have clicked for the first time
+# New ESCAPE menu that shows you the controls in-game!
+# - Really proud of this, it loads all the pixels rendered onscreen into an array and then loads them back
+# - There's some potential here for loading custom maps or having save / load games eventually
+# Some lil art I did for the new splash screen and escape menu
+# PAUSED indicator on UI
+# Disabled Anti-Aliasing, which is on by default apparently
+# Added small 2px unbreakable border around the game area (looks better)
+# Increased minimum FPS to 10 - any lower just sucks. Now that you can pause, going lower is pointless
+# Changed names of some methods to be easier to read
+# Changed size of pre-generated font for clearer large text
+# ----------------------------------------------------------------------------------------
 # CocoZombies V1.3 1/9/2025
 # Made Right Click create a 16-32px bomb (twice as big as Left Click)
 # Made s and S adjust Simulation Speed (in FPS, Minimum 1, Default 45, Maximum 144)
-# Added a pause button (Spacebar) You can still place bombs when paused! This just halts any NPC movement. 
-# - Known visual error: Bombs will not leave behind Dead pixels until simulation is unpaused. This doesn't affect anything.
+# Added a pause button (Spacebar) You can still place bombs when paused! This just halts any NPC movement
+# - Known visual error: Bombs will not leave behind Dead pixels until simulation is unpaused. This doesn't affect anything
 # - Utilized old "freeze" integer, redefined as a boolean named "pause"
 # Resized to 600x600 because honestly, 1000x1000 was tooooo big. This feels like the sweet spot.
 # MORE comments on stuff I am now understanding and didn't before (or just didn't get to yet)
@@ -52,10 +66,10 @@
 # Implement zooming so monitors larger than 1080p don't struggle to see stuff
 # Some sort method for controlling Zombies, by having them follow the mouse cursor
 # Militarized Humans (Cops/Soldiers)
-# - Would also eventually have support for controlling via mouse cursor. 
+# - Would also eventually have support for controlling via mouse cursor
 # - Would be a fantastic OFFENSE vs DEFENSE game mechanic! :D
 # Some visual UI element to show current sim speed setting
-# - more UI in general - will be useful when multiple weapon selections are possible 
+# - more UI in general - will be useful when multiple weapon selections are possible
 # -- (using number row to change what weapons are bound to mouse clicks)
 # ----------------------------------------------------------------------------------------
 # CocoZombies V1.2b
@@ -63,29 +77,22 @@
 # ----------------------------------------------------------------------------------------
 # CocoZombies V1.2 (First uploaded version)
 # ALREADY CHANGED from 
-# Hotkey for increase / decrease Zombie Population 
+# Hotkey for increase / decrease Zombie Population
 # - Increase: ] and Decrease: [
 # - Minimum 1, maximum '20,000' (Max is the current population)
 # - Made an iterative spawning statement for creating zombies
 # -- previously hardcoded to spawn 4 zombies in sequence
 # -- Allows easier adjustment of zombie starting population :)
-# 
 # Larger simulation window
-# 
 # Adjusted Human/Dead/Zombie counter positions
-# 
 # Replaced "num" variable with "popCount" which is calculated from a formula including two new variables, popMax and popMin
-# 
 # Fixed offset Bomb crater placement
 # - Visual was offset from area of effect, causing walls to be destroyed to the top left of where you click but killing anything centered on the mouse
 # - Original code had mouse position coords reduced by radius of the generated bomb, for some reason. (mouseX-radius, mouseY-radius)
-# 
 # Added hotkey and boolean to enable and disable zombie lifespan
 # - 'enableDecay' by default set to false
 # - Currently, while disabled, will kill zombies instantly when enabled as zombielife always counts down.
-# 
 # Changed reset hotkey to "r / R" from "z / Z"
-# 
 # Verbose comments
 # 
 # =================================================================================
@@ -99,7 +106,7 @@
 # - LMB for placing WALL, RMB for placing EMPTY
 # - LMB for placing Humans, RMB for placing Zombies?
 # 
-# Map generation from a seed
+# Map generation from a seed                    << WORKING ON as of 1.4
 # - allow for restarting the same generation
 # - possibly enter a seed at some point
 # 
